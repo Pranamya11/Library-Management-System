@@ -1,0 +1,263 @@
+1. Database Configuration
+Create a class to manage the database connection.
+
+DatabaseConnection.java
+java
+Copy code
+package config;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    private static final String URL = "jdbc:mysql://localhost:3306/library";
+    private static final String USER = "yourusername";
+    private static final String PASSWORD = "yourpassword";
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+}
+
+2. Models
+Define classes for Book, User, and Borrow.
+
+Book.java
+java
+Copy code
+package model;
+
+public class Book {
+    private int id;
+    private String title;
+    private String author;
+    private String genre;
+    private boolean available;
+
+    // Constructors, Getters, and Setters
+}
+User.java
+java
+Copy code
+package model;
+
+public class User {
+    private int id;
+    private String name;
+    private String email;
+
+    // Constructors, Getters, and Setters
+}
+Borrow.java
+java
+Copy code
+package model;
+
+import java.util.Date;
+
+public class Borrow {
+    private int borrowId;
+    private int userId;
+    private int bookId;
+    private Date borrowDate;
+    private Date returnDate;
+
+    // Constructors, Getters, and Setters
+}
+
+3. Data Access Objects (DAO)
+These classes will contain methods to interact with the database.
+
+BookDAO.java
+java
+Copy code
+package dao;
+
+import config.DatabaseConnection;
+import model.Book;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookDAO {
+    public List<Book> getAllBooks() {
+        List<Book> books = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM books")) {
+
+            while (rs.next()) {
+                Book book = new Book();
+                book.setId(rs.getInt("id"));
+                book.setTitle(rs.getString("title"));
+                book.setAuthor(rs.getString("author"));
+                book.setGenre(rs.getString("genre"));
+                book.setAvailable(rs.getBoolean("available"));
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+    public void addBook(Book book) {
+        String query = "INSERT INTO books (title, author, genre, available) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, book.getTitle());
+            pstmt.setString(2, book.getAuthor());
+            pstmt.setString(3, book.getGenre());
+            pstmt.setBoolean(4, book.isAvailable());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Methods for updateBook, deleteBook, and getBookById can be added similarly.
+}
+UserDAO.java
+java
+Copy code
+package dao;
+
+import config.DatabaseConnection;
+import model.User;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserDAO {
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users")) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public void addUser(User user) {
+        String query = "INSERT INTO users (name, email) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getEmail());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Methods for updateUser, deleteUser, and getUserById can be added similarly.
+}
+BorrowDAO.java
+java
+Copy code
+package dao;
+
+import config.DatabaseConnection;
+import model.Borrow;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BorrowDAO {
+    public List<Borrow> getAllBorrows() {
+        List<Borrow> borrows = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM borrows")) {
+
+            while (rs.next()) {
+                Borrow borrow = new Borrow();
+                borrow.setBorrowId(rs.getInt("borrow_id"));
+                borrow.setUserId(rs.getInt("user_id"));
+                borrow.setBookId(rs.getInt("book_id"));
+                borrow.setBorrowDate(rs.getDate("borrow_date"));
+                borrow.setReturnDate(rs.getDate("return_date"));
+                borrows.add(borrow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return borrows;
+    }
+
+    public void addBorrow(Borrow borrow) {
+        String query = "INSERT INTO borrows (user_id, book_id, borrow_date, return_date) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, borrow.getUserId());
+            pstmt.setInt(2, borrow.getBookId());
+            pstmt.setDate(3, new java.sql.Date(borrow.getBorrowDate().getTime()));
+            pstmt.setDate(4, new java.sql.Date(borrow.getReturnDate().getTime()));
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Methods for updateBorrow and deleteBorrow can be added similarly.
+}
+
+4. Main Application Logic
+LibraryService.java
+This service class contains the logic for managing books, users, and borrowing actions.
+
+Main.java
+java
+Copy code
+import dao.BookDAO;
+import dao.UserDAO;
+import dao.BorrowDAO;
+import model.Book;
+import model.User;
+import model.Borrow;
+
+public class Main {
+    public static void main(String[] args) {
+        BookDAO bookDAO = new BookDAO();
+        UserDAO userDAO = new UserDAO();
+        BorrowDAO borrowDAO = new BorrowDAO();
+
+        // Add a new book
+        Book book = new Book();
+        book.setTitle("Java Programming");
+        book.setAuthor("Author Name");
+        book.setGenre("Programming");
+        book.setAvailable(true);
+        bookDAO.addBook(book);
+
+        // Add a new user
+        User user = new User();
+        user.setName("John Doe");
+        user.setEmail("johndoe@example.com");
+        userDAO.addUser(user);
+
+        // Borrow a book
+        Borrow borrow = new Borrow();
+        borrow.setUserId(1); // Use actual user ID
+        borrow.setBookId(1); // Use actual book ID
+        borrow.setBorrowDate(new java.util.Date());
+        borrow.setReturnDate(new java.util.Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // 7 days later
+        borrowDAO.addBorrow(borrow);
+
+        System.out.println("Library Management System Initialized.");
+    }
+}
