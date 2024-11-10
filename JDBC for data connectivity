@@ -1,0 +1,311 @@
+Step 1: Add MySQL JDBC Dependency
+Ensure that the MySQL JDBC driver is included in your pom.xml if you're using Maven.
+
+xml
+Copy code
+<dependencies>
+    <!-- MySQL JDBC driver -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.30</version>  <!-- Use the latest version -->
+    </dependency>
+</dependencies>
+
+Step 2: Create Database Utility Class for JDBC Connection
+You'll need a utility class that manages the database connection. This will encapsulate the logic for connecting to and disconnecting from the database.
+
+java
+Copy code
+package com.librarymanagementsystem.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBConnection {
+    
+    // Database credentials
+    private static final String URL = "jdbc:mysql://localhost:3306/library_management_system";  // Change your DB URL accordingly
+    private static final String USER = "root";  // Your MySQL username
+    private static final String PASSWORD = "password";  // Your MySQL password
+    
+    // Method to get database connection
+    public static Connection getConnection() {
+        try {
+            // Load MySQL JDBC driver (optional as it's usually auto-loaded)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to connect to the database", e);
+        }
+    }
+    
+    // Close the connection
+    public static void closeConnection(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+Create a DAO (Data Access Object) Class for Database Operations
+For each entity (e.g., User, Book, LibraryMember, IssueRecord), you should create a corresponding DAO class to handle CRUD operations (Create, Read, Update, Delete).
+
+Example: BookDao.java for CRUD operations on the Book table
+java
+Copy code
+package com.librarymanagementsystem.dao;
+
+import com.librarymanagementsystem.model.Book;
+import com.librarymanagementsystem.util.DBConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookDao {
+    
+    // Insert a new book into the database
+    public void addBook(Book book) {
+        String query = "INSERT INTO Book (isbn, title, author, publisher, published_year, category, copies_available) " +
+                       "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setString(1, book.getIsbn());
+            statement.setString(2, book.getTitle());
+            statement.setString(3, book.getAuthor());
+            statement.setString(4, book.getPublisher());
+            statement.setInt(5, book.getPublishedYear());
+            statement.setString(6, book.getCategory());
+            statement.setInt(7, book.getCopiesAvailable());
+            
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Get all books from the database
+    public List<Book> getAllBooks() {
+        List<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM Book";
+        try (Connection connection = DBConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            
+            while (resultSet.next()) {
+                Book book = new Book();
+                book.setBookId(resultSet.getInt("book_id"));
+                book.setIsbn(resultSet.getString("isbn"));
+                book.setTitle(resultSet.getString("title"));
+                book.setAuthor(resultSet.getString("author"));
+                book.setPublisher(resultSet.getString("publisher"));
+                book.setPublishedYear(resultSet.getInt("published_year"));
+                book.setCategory(resultSet.getString("category"));
+                book.setCopiesAvailable(resultSet.getInt("copies_available"));
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+    
+    // Update book details
+    public void updateBook(Book book) {
+        String query = "UPDATE Book SET title = ?, author = ?, publisher = ?, published_year = ?, category = ?, copies_available = ? " +
+                       "WHERE book_id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setString(1, book.getTitle());
+            statement.setString(2, book.getAuthor());
+            statement.setString(3, book.getPublisher());
+            statement.setInt(4, book.getPublishedYear());
+            statement.setString(5, book.getCategory());
+            statement.setInt(6, book.getCopiesAvailable());
+            statement.setInt(7, book.getBookId());
+            
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Delete a book
+    public void deleteBook(int bookId) {
+        String query = "DELETE FROM Book WHERE book_id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            
+            statement.setInt(1, bookId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+Step 4: Create Model Classes
+You'll also need corresponding model classes to represent the entities in the database. For example:
+
+Book.java Model Class
+java
+Copy code
+package com.librarymanagementsystem.model;
+
+public class Book {
+    private int bookId;
+    private String isbn;
+    private String title;
+    private String author;
+    private String publisher;
+    private int publishedYear;
+    private String category;
+    private int copiesAvailable;
+
+    // Getters and Setters
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public int getPublishedYear() {
+        return publishedYear;
+    }
+
+    public void setPublishedYear(int publishedYear) {
+        this.publishedYear = publishedYear;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getCopiesAvailable() {
+        return copiesAvailable;
+    }
+
+    public void setCopiesAvailable(int copiesAvailable) {
+        this.copiesAvailable = copiesAvailable;
+    }
+}
+
+
+
+Step 5: Use the DAO Classes in your Services
+You can now call these DAO methods in your service layer to interact with the database.
+
+Example: Using BookDao in the Service Layer
+java
+Copy code
+package com.librarymanagementsystem.service;
+
+import com.librarymanagementsystem.dao.BookDao;
+import com.librarymanagementsystem.model.Book;
+
+import java.util.List;
+
+public class BookService {
+    
+    private BookDao bookDao = new BookDao();
+    
+    public void addBook(Book book) {
+        bookDao.addBook(book);
+    }
+    
+    public List<Book> getAllBooks() {
+        return bookDao.getAllBooks();
+    }
+    
+    public void updateBook(Book book) {
+        bookDao.updateBook(book);
+    }
+    
+    public void deleteBook(int bookId) {
+        bookDao.deleteBook(bookId);
+    }
+}
+Step 6: Testing JDBC Integration
+You can test the functionality by calling the BookService methods in your application. For instance:
+
+java
+Copy code
+package com.librarymanagementsystem;
+
+import com.librarymanagementsystem.model.Book;
+import com.librarymanagementsystem.service.BookService;
+
+import java.util.List;
+
+public class LibraryManagementSystemApplication {
+    public static void main(String[] args) {
+        BookService bookService = new BookService();
+        
+        // Adding a new book
+        Book newBook = new Book();
+        newBook.setIsbn("978-0134685991");
+        newBook.setTitle("Effective Java");
+        newBook.setAuthor("Joshua Bloch");
+        newBook.setPublisher("Addison-Wesley");
+        newBook.setPublishedYear(2018);
+        newBook.setCategory("Programming");
+        newBook.setCopiesAvailable(10);
+        
+        bookService.addBook(newBook);
+        
+        // Get and print all books
+        List<Book> books = bookService.getAllBooks();
+        for (Book book : books) {
+            System.out.println(book.getTitle() + " by " + book.getAuthor());
+        }
+    }
+}
