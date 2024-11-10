@@ -1,0 +1,45 @@
+-- Create User Table
+CREATE TABLE User (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    role ENUM('STUDENT', 'ADMIN') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create LibraryMember Table
+CREATE TABLE LibraryMember (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    contact_number VARCHAR(15),
+    address VARCHAR(255),
+    membership_date DATE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
+
+-- Create Book Table
+CREATE TABLE Book (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    isbn VARCHAR(20) UNIQUE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    publisher VARCHAR(100),
+    published_year INT,
+    category VARCHAR(50),
+    copies_available INT DEFAULT 0
+);
+
+-- Create IssueRecord Table
+CREATE TABLE IssueRecord (
+    issue_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    member_id INT NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    return_date DATE,
+    status ENUM('ISSUED', 'RETURNED') DEFAULT 'ISSUED',
+    FOREIGN KEY (book_id) REFERENCES Book(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES LibraryMember(member_id) ON DELETE CASCADE
+);
