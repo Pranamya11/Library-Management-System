@@ -1,0 +1,56 @@
+LibraryManagementSystem/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── librarymanagementsystem/
+│   │   │           ├── LibraryManagementSystemApplication.java   # Main application entry point
+│   │   │           
+│   │   │           ├── config/                 # Configuration files
+│   │   │           │   └── WebConfig.java      # Web configuration, CORS settings, etc.
+│   │   │
+│   │   │           ├── controller/             # Controllers for handling HTTP requests
+│   │   │           │   ├── AuthController.java # Controller for authentication and registration
+│   │   │           │   ├── BookController.java # Controller for book management
+│   │   │           │   ├── UserController.java # Controller for student management
+│   │   │           │   └── IssueController.java# Controller for book issuance and return
+│   │   │
+│   │   │           ├── model/                  # Entities representing database tables
+│   │   │           │   ├── Book.java           # Book entity
+│   │   │           │   ├── User.java           # User (student) entity
+│   │   │           │   ├── LibraryMember.java  # Library member entity
+│   │   │           │   └── IssueRecord.java    # Issue record entity
+│   │   │
+│   │   │           ├── repository/             # Repositories for CRUD operations on entities
+│   │   │           │   ├── BookRepository.java # Repository interface for books
+│   │   │           │   ├── UserRepository.java # Repository interface for users
+│   │   │           │   └── IssueRepository.java# Repository interface for issue records
+│   │   │
+│   │   │           ├── service/                # Service layer for business logic
+│   │   │           │   ├── AuthService.java    # Authentication and authorization service
+│   │   │           │   ├── BookService.java    # Business logic for book management
+│   │   │           │   ├── UserService.java    # Business logic for user management
+│   │   │           │   └── IssueService.java   # Business logic for book issuance and return
+│   │   │
+│   │   │           └── dto/                    # Data Transfer Objects for API responses
+│   │   │               ├── UserDto.java        # DTO for user-related data
+│   │   │               ├── BookDto.java        # DTO for book-related data
+│   │   │               └── IssueDto.java       # DTO for issue-related data
+│   │   │
+│   │   └── resources/
+│   │       ├── application.properties          # Application configuration
+│   │       ├── data.sql                        # SQL file to populate database with sample data
+│   │       └── static/                         # Static files like CSS, JavaScript
+│   │           └── css/
+│   │               └── style.css               # Basic styling
+│   │
+│   ├── test/                                   # Test cases for the application
+│   │   └── java/
+│   │       └── com/
+│   │           └── librarymanagementsystem/
+│   │               ├── controller/             # Controller tests
+│   │               ├── service/                # Service tests
+│   │               └── LibraryManagementSystemApplicationTests.java
+│
+└── pom.xml                                     # Maven dependencies and plugins
