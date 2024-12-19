@@ -1,0 +1,49 @@
+// Sample data for books (in a real application, this data would come from a backend database)
+const books = [
+    { title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960 },
+    { title: "1984", author: "George Orwell", year: 1949 },
+    { title: "Moby Dick", author: "Herman Melville", year: 1851 },
+    { title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925 },
+    { title: "Pride and Prejudice", author: "Jane Austen", year: 1813 }
+  ];
+  
+  // Function to display books in the #book-list section
+  function displayBooks(bookArray) {
+    const bookList = document.getElementById('book-list');
+    bookList.innerHTML = ''; // Clear existing content
+  
+    bookArray.forEach(book => {
+      const bookItem = document.createElement('div');
+      bookItem.classList.add('book-item');
+      bookItem.innerHTML = `
+        <h3>${book.title}</h3>
+        <p>Author: ${book.author}</p>
+        <p>Year: ${book.year}</p>
+      `;
+      bookList.appendChild(bookItem);
+    });
+  }
+  
+  // Function to search books by title or author
+  function searchBooks(query) {
+    const lowerCaseQuery = query.toLowerCase();
+    const filteredBooks = books.filter(book => 
+      book.title.toLowerCase().includes(lowerCaseQuery) || 
+      book.author.toLowerCase().includes(lowerCaseQuery)
+    );
+    displayBooks(filteredBooks);
+  }
+  
+  // Display all books when the page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    displayBooks(books);
+  });
+  
+  // Adding an event listener for a search input (if you add an input field with an id of 'search')
+  const searchInput = document.getElementById('search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchBooks(e.target.value);
+    });
+  };
+  
