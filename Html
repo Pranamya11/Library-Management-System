@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Library Management System</title>
     <!-- Link to external CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="Untitled-2.css">
     <!-- Include React and Babel for the React component rendering -->
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="project.js" defer></script>
 </head>
 <body>
     <div id="root"></div>
@@ -20,11 +19,7 @@
             return (
                 <div className="app-container">
                     <header className="header">
-                        <div className="header-left">
-                            <img src="mmpng-image_7094927.png" alt=" " className="  "/>
-                            
-                        </div>
-                        <p className="logo-text">JJ Library</p>
+                        <h1>Library</h1>
                         <div className="header-right">
                             <button className="login-btn">Login</button>
                             <button className="register-btn">Register</button>
@@ -42,18 +37,18 @@
 
                     <main className="main-content">
                         <section id="home">
-                            <h2>Welcome to the Library</h2>
-                            <p>Manage your library with ease!</p>
+                            <h2>Welcome to the our Library</h2>
+                            <p>its a self service library</p>
                         </section>
 
                         <section id="books">
                             <h2>Books Collection</h2>
-                            <p>View and manage the books available in the library.</p>
+                            <p>There are many type of books Available in this Library</p>
                         </section>
 
                         <section id="about">
                             <h2>About Us</h2>
-                            <p>Learn more about our library management system.</p>
+                            <p>This Library is managed By Pranamya DAs.</p>
                         </section>
 
                         <section id="contact">
@@ -63,13 +58,15 @@
                     </main>
 
                     <footer className="footer">
-                        <p> 2024 Online Library Management System. All rights reserved.</p>
+                        <p>&copy; All rights reserved.</p>
                     </footer>
                 </div>
             );
         }
 
         ReactDOM.render(<App />, document.getElementById('root'));
+        
     </script>
+    <script src="United1.js" type="text/javascript"></script>
 </body>
 </html>
