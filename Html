@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Library Management System</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include React and Babel for the React component rendering -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="project.js" defer></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function App() {
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <div className="header-left">
+                            <img src="mmpng-image_7094927.png" alt=" " className="  "/>
+                            
+                        </div>
+                        <p className="logo-text">JJ Library</p>
+                        <div className="header-right">
+                            <button className="login-btn">Login</button>
+                            <button className="register-btn">Register</button>
+                        </div>
+                    </header>
+
+                    <nav className="navbar">
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#books">Books</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </nav>
+
+                    <main className="main-content">
+                        <section id="home">
+                            <h2>Welcome to the Library</h2>
+                            <p>Manage your library with ease!</p>
+                        </section>
+
+                        <section id="books">
+                            <h2>Books Collection</h2>
+                            <p>View and manage the books available in the library.</p>
+                        </section>
+
+                        <section id="about">
+                            <h2>About Us</h2>
+                            <p>Learn more about our library management system.</p>
+                        </section>
+
+                        <section id="contact">
+                            <h2>Contact Us</h2>
+                            <p>Get in touch for support or inquiries.</p>
+                        </section>
+                    </main>
+
+                    <footer className="footer">
+                        <p> 2024 Online Library Management System. All rights reserved.</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
