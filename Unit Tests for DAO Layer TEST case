@@ -1,0 +1,64 @@
+package com.example.librarymanagement.dao;
+
+import com.example.librarymanagement.models.Book;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class BookDAOTest {
+
+    private BookDAO bookDAO;
+
+    @BeforeEach
+    void setUp() {
+        bookDAO = new BookDAO();
+    }
+
+    @Test
+    void testSave() {
+        Book book = new Book(1, "Design Patterns", "Erich Gamma", "Programming");
+        bookDAO.save(book);
+
+        List<Book> books = bookDAO.findAll();
+        assertEquals(1, books.size());
+        assertEquals("Design Patterns", books.get(0).getTitle());
+    }
+
+    @Test
+    void testFindAll() {
+        bookDAO.save(new Book(1, "Refactoring", "Martin Fowler", "Programming"));
+        bookDAO.save(new Book(2, "Domain-Driven Design", "Eric Evans", "Programming"));
+
+        List<Book> books = bookDAO.findAll();
+        assertEquals(2, books.size());
+    }
+
+    @Test
+    void testFindById_Found() {
+        bookDAO.save(new Book(1, "Refactoring", "Martin Fowler", "Programming"));
+        Book book = bookDAO.findById(1);
+
+        assertNotNull(book);
+        assertEquals("Refactoring", book.getTitle());
+    }
+
+    @Test
+    void testFindById_NotFound() {
+        bookDAO.save(new Book(1, "Refactoring", "Martin Fowler", "Programming"));
+        Book book = bookDAO.findById(2);
+
+        assertNull(book);
+    }
+
+    @Test
+    void testDelete() {
+        bookDAO.save(new Book(1, "Refactoring", "Martin Fowler", "Programming"));
+        bookDAO.delete(1);
+
+        List<Book> books = bookDAO.findAll();
+        assertTrue(books.isEmpty());
+    }
+}
