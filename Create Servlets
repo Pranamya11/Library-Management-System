@@ -1,0 +1,53 @@
+a. AddBookServlet
+package com.example.librarymanagement.servlets;
+
+import com.example.librarymanagement.models.Book;
+import com.example.librarymanagement.services.LibraryService;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/addBook")
+public class AddBookServlet extends HttpServlet {
+    private LibraryService libraryService = new LibraryService();
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String title = request.getParameter("title");
+        String author = request.getParameter("author");
+        String category = request.getParameter("category");
+
+        Book book = new Book(libraryService.getBooks().size() + 1, title, author, category);
+        libraryService.addBook(book);
+
+        response.sendRedirect("viewBooks");
+    }
+}
+
+
+b. ViewBooksServlet
+package com.example.librarymanagement.servlets;
+
+import com.example.librarymanagement.services.LibraryService;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/viewBooks")
+public class ViewBooksServlet extends HttpServlet {
+    private LibraryService libraryService = new LibraryService();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("books", libraryService.getBooks());
+        request.getRequestDispatcher("/views/viewBooks.jsp").forward(request, response);
+    }
+}
