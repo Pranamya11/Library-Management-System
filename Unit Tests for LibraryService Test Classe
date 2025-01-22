@@ -1,0 +1,55 @@
+package com.example.librarymanagement.services;
+
+import com.example.librarymanagement.models.Book;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class LibraryServiceTest {
+
+    private LibraryService libraryService;
+
+    @BeforeEach
+    void setUp() {
+        libraryService = new LibraryService();
+    }
+
+    @Test
+    void testAddBook() {
+        Book book = new Book(1, "Effective Java", "Joshua Bloch", "Programming");
+        libraryService.addBook(book);
+
+        List<Book> books = libraryService.getBooks();
+        assertEquals(1, books.size());
+        assertEquals("Effective Java", books.get(0).getTitle());
+    }
+
+    @Test
+    void testGetBooks() {
+        libraryService.addBook(new Book(1, "Clean Code", "Robert C. Martin", "Programming"));
+        libraryService.addBook(new Book(2, "The Pragmatic Programmer", "Andrew Hunt", "Programming"));
+
+        List<Book> books = libraryService.getBooks();
+        assertEquals(2, books.size());
+    }
+
+    @Test
+    void testGetBookById_Found() {
+        libraryService.addBook(new Book(1, "Clean Code", "Robert C. Martin", "Programming"));
+        Book book = libraryService.getBookById(1);
+
+        assertNotNull(book);
+        assertEquals("Clean Code", book.getTitle());
+    }
+
+    @Test
+    void testGetBookById_NotFound() {
+        libraryService.addBook(new Book(1, "Clean Code", "Robert C. Martin", "Programming"));
+        Book book = libraryService.getBookById(2);
+
+        assertNull(book);
+    }
+}
