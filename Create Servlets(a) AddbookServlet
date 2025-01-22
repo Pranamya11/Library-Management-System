@@ -1,4 +1,4 @@
-a. AddBookServlet
+
 package com.example.librarymanagement.servlets;
 
 import com.example.librarymanagement.models.Book;
@@ -29,25 +29,4 @@ public class AddBookServlet extends HttpServlet {
 }
 
 
-b. ViewBooksServlet
-package com.example.librarymanagement.servlets;
 
-import com.example.librarymanagement.services.LibraryService;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-@WebServlet("/viewBooks")
-public class ViewBooksServlet extends HttpServlet {
-    private LibraryService libraryService = new LibraryService();
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("books", libraryService.getBooks());
-        request.getRequestDispatcher("/views/viewBooks.jsp").forward(request, response);
-    }
-}
